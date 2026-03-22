@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🚣 Canoagem do Kayo — Forme sua dupla!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════ RESET ═══════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{
+  --o:#FF6B1A;--o2:#FF9A3C;--t:#00C4CC;--t2:#00EBFF;
+  --y:#FFD93D;--g:#22C55E;--r:#EF4444;
+  --dk:#070F1A;--dk2:#0D1B2A;--dk3:#112235;
+  --wh:#F0F8FF;--mu:#7aadcc;
+  --cb:#ffffff0d;--cbb:#ffffff18;--rad:20px;--rads:12px;
+}
+body.sol{--dk:#EAF6FF;--dk2:#D4EFFF;--dk3:#C0E8FF;--wh:#0D1B2A;--mu:#2a5070;--cb:rgba(255,255,255,.65);--cbb:rgba(0,150,180,.2)}
+html,body{max-width:100%;overflow-x:hidden}body{font-family:'Nunito',sans-serif;background:var(--dk);color:var(--wh);overflow-x:hidden;transition:background .5s,color .5s}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--dk2)}
+::-webkit-scrollbar-thumb{background:var(--t);border-radius:10px}
+
+/* ═══════════════════════ VIDEO BG ═══════════════════════ */
+#vbg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#kvid{position:absolute;top:50%;left:50%;min-width:100%;min-height:100%;width:auto;height:auto;transform:translate(-50%,-50%);object-fit:cover;opacity:.80;display:block}
+#vov{position:absolute;inset:0;background:linear-gradient(180deg,var(--dk) 0%,rgba(7,15,26,.74) 18%,rgba(7,15,26,.74) 82%,var(--dk) 100%);transition:background .5s}
+body.sol #vov{background:linear-gradient(180deg,var(--dk) 0%,rgba(234,246,255,.8) 18%,rgba(234,246,255,.8) 82%,var(--dk) 100%)}
+
+/* ═══════════════════════ NAV ═══════════════════════ */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(7,15,26,.88);backdrop-filter:blur(18px);border-bottom:1.5px solid var(--cbb);display:flex;align-items:center;justify-content:space-between;padding:.6rem 2rem;transition:background .5s}
+body.sol nav{background:rgba(212,239,255,.92)}
+.nlogo{font-family:'Bangers',cursive;font-size:1.5rem;letter-spacing:2px;color:var(--t);text-shadow:1px 2px 0 var(--o);cursor:pointer;transition:transform .2s;user-select:none}
+.nlogo:hover{transform:scale(1.06) rotate(-1deg)}
+.nlinks{display:flex;gap:.4rem;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.nlinks a{font-weight:800;font-size:.8rem;color:var(--wh);text-decoration:none;padding:.3rem .7rem;border-radius:30px;border:1.5px solid transparent;transition:background .2s,color .2s}
+.nlinks a:hover{background:var(--t);color:var(--dk)}
+.npill{display:flex;align-items:center;gap:.35rem;background:var(--cb);border:1.5px solid var(--cbb);border-radius:30px;padding:.3rem .8rem;font-size:.78rem;font-weight:800;cursor:pointer;color:var(--wh);transition:border-color .2s,color .2s}
+.npill:hover{border-color:var(--y);color:var(--y)}
+.livebdg{display:flex;align-items:center;gap:.35rem;background:rgba(239,68,68,.15);border:1.5px solid rgba(239,68,68,.3);border-radius:30px;padding:.28rem .75rem;font-size:.73rem;font-weight:900;color:#ff7070}
+.ldot{width:7px;height:7px;background:#ef4444;border-radius:50%;animation:lp 1.2s infinite}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+
+/* ═══════════════════════ FABs ═══════════════════════ */
+.fabs{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;display:flex;flex-direction:column;gap:.5rem;align-items:flex-end}
+.fab{width:44px;height:44px;border-radius:50%;border:none;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s;color:white}
+.fab-m{background:linear-gradient(135deg,var(--o),var(--o2));box-shadow:0 4px 16px rgba(255,107,26,.4)}
+.fab-m:hover,.fab-m.on{transform:scale(1.12);box-shadow:0 6px 24px rgba(255,107,26,.6)}
+.fab-m.on{animation:mbeat 1s ease-in-out infinite}
+@keyframes mbeat{0%,100%{box-shadow:0 4px 16px rgba(255,107,26,.4)}50%{box-shadow:0 0 0 10px rgba(255,107,26,0)}}
+.fab-v,.fab-s{background:rgba(7,15,26,.85);border:1.5px solid var(--cbb);backdrop-filter:blur(10px)}
+.fab-v:hover,.fab-s:hover{transform:scale(1.1);border-color:var(--t)}
+
+/* ═══════════════════════ NOTIFICAÇÃO PEDREXXX ═══════════════════════ */
+/* Aparece como card voando do lado direito, estilo notificação de celular */
+#devcard{
+  position:fixed;bottom:6rem;right:-380px;z-index:9999;
+  width:310px;
+  background:rgba(12,12,12,.97);
+  border-radius:20px;
+  border:1.5px solid rgba(255,107,26,.35);
+  padding:14px;
+  box-shadow:0 16px 48px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.04);
+  transition:right .65s cubic-bezier(.34,1.56,.64,1);
+  overflow:hidden;
+}
+#devcard.show{right:16px}
+/* Listinha colorida no topo */
+#devcard::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--o),var(--y),var(--t),var(--o));background-size:200%;animation:rainbow 3s linear infinite}
+@keyframes rainbow{0%{background-position:0%}100%{background-position:200%}}
+
+.dc-row{display:flex;align-items:center;gap:10px}
+.dc-photo{
+  width:56px;height:56px;border-radius:14px;
+  overflow:hidden;flex-shrink:0;
+  border:2.5px solid var(--o);
+  background:linear-gradient(135deg,var(--o),var(--t));
+  display:flex;align-items:center;justify-content:center;font-size:1.8rem;
+}
+.dc-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.dc-info{flex:1;min-width:0}
+.dc-name{font-weight:900;font-size:.92rem;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dc-role{font-size:.7rem;color:var(--o);font-weight:900;letter-spacing:.5px;text-transform:uppercase;margin-top:.1rem}
+.dc-msg{font-size:.78rem;color:rgba(255,255,255,.6);font-weight:700;margin-top:.4rem;line-height:1.45}
+.dc-actions{display:flex;gap:.5rem;margin-top:10px}
+.dc-btn{flex:1;padding:.38rem .5rem;border-radius:10px;border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:rgba(255,255,255,.65);font-size:.72rem;font-weight:800;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif}
+.dc-btn:hover{background:rgba(255,107,26,.2);color:var(--o);border-color:rgba(255,107,26,.35)}
+.dc-btn.dc-main{background:linear-gradient(135deg,var(--o),var(--o2));color:white;border:none}
+.dc-btn.dc-main:hover{filter:brightness(1.1);transform:scale(1.02)}
+.dc-close{position:absolute;top:8px;right:10px;background:none;border:none;color:rgba(255,255,255,.25);font-size:.85rem;cursor:pointer;transition:color .2s;line-height:1}
+.dc-close:hover{color:var(--o)}
+.dc-time{font-size:.62rem;color:rgba(255,255,255,.3);font-weight:700;position:absolute;top:10px;right:28px}
+
+/* ═══════════════════════ HERO ═══════════════════════ */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:1;padding:7rem 1rem 5rem;text-align:center;overflow:hidden}
+.pts{position:absolute;inset:0;pointer-events:none;z-index:0}
+.pt{position:absolute;animation:ptfly linear infinite;opacity:0;user-select:none}
+@keyframes ptfly{0%{transform:translateY(100vh) rotate(0deg);opacity:0}8%{opacity:.55}92%{opacity:.55}100%{transform:translateY(-15vh) rotate(540deg);opacity:0}}
+.wavewrap{position:absolute;bottom:0;left:0;right:0;height:160px;overflow:hidden;z-index:1}
+.wv{position:absolute;bottom:0;left:0;width:200%;height:100%}
+.wv1{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100'%3E%3Cpath fill='%2300C4CC' fill-opacity='.22' d='M0,50L60,44C120,38,240,26,360,32C480,38,600,62,720,68C840,74,960,62,1080,50C1200,38,1320,26,1380,20L1440,14L1440,100L0,100Z'/%3E%3C/svg%3E") repeat-x;background-size:50% 100%;animation:wm 9s linear infinite}
+.wv2{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100'%3E%3Cpath fill='%23FF6B1A' fill-opacity='.1' d='M0,80L80,68C160,56,320,32,480,26C640,20,800,44,960,56C1120,68,1280,68,1360,68L1440,68L1440,100L0,100Z'/%3E%3C/svg%3E") repeat-x;background-size:65% 100%;animation:wm 14s linear infinite reverse}
+@keyframes wm{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.hcont{position:relative;z-index:2;max-width:820px}
+.hbadge{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--o),var(--o2));color:white;font-weight:900;font-size:.8rem;letter-spacing:2px;text-transform:uppercase;padding:.45rem 1.3rem;border-radius:30px;margin-bottom:1.3rem;box-shadow:0 4px 20px rgba(255,107,26,.4);animation:bpop 2.5s ease-in-out infinite}
+@keyframes bpop{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.htitle{font-family:'Bangers',cursive;font-size:clamp(3rem,10vw,6.5rem);line-height:1;letter-spacing:3px;margin-bottom:.6rem}
+.t1{color:var(--wh)}.t2{color:var(--t);filter:drop-shadow(0 0 18px var(--t))}.t3{color:var(--o)}
+.hsub{font-size:clamp(.9rem,3.5vw,1.2rem);color:var(--mu);font-weight:700;margin-bottom:2.2rem;line-height:1.55;max-width:560px;margin-inline:auto;padding:0 .5rem}
+.hsub strong{color:var(--y)}
+.ctag{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem}
+.btn{padding:.85rem 2rem;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;cursor:pointer;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:.45rem;transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.btn::before{content:'';position:absolute;top:-50%;left:-60%;width:40%;height:200%;background:rgba(255,255,255,.2);transform:skewX(-20deg);transition:left .4s}
+.btn:hover::before{left:120%}
+.btn:hover{transform:translateY(-3px)}
+.btn:active{transform:scale(.97)}
+.btn-o{background:linear-gradient(135deg,var(--o),var(--o2));color:white;box-shadow:0 6px 20px rgba(255,107,26,.4)}
+.btn-o:hover{box-shadow:0 10px 28px rgba(255,107,26,.55)}
+.btn-t{background:linear-gradient(135deg,var(--t),var(--t2));color:var(--dk);box-shadow:0 6px 20px rgba(0,196,204,.35)}
+.btn-t:hover{box-shadow:0 10px 28px rgba(0,196,204,.5)}
+.btn-g{background:var(--cb);border:2px solid var(--cbb);color:var(--wh)}
+.btn-g:hover{border-color:var(--t);color:var(--t)}
+.statsbar{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;padding:1.2rem 1.5rem;background:var(--cb);border:1.5px solid var(--cbb);border-radius:24px;backdrop-filter:blur(8px);max-width:640px;margin:0 auto;width:100%}
+.stat{text-align:center}
+.snum{font-family:'Bangers',cursive;font-size:2.5rem;color:var(--t);line-height:1;filter:drop-shadow(0 0 8px var(--t))}
+.snum.o{color:var(--o);filter:drop-shadow(0 0 8px var(--o))}
+.snum.y{color:var(--y);filter:drop-shadow(0 0 8px var(--y))}
+.slabel{font-size:.7rem;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.5px;margin-top:.1rem}
+
+/* ═══════════════════════ SECTIONS ═══════════════════════ */
+.sec{padding:5.5rem 1.5rem;position:relative;z-index:1}
+.sec-alt{background:linear-gradient(180deg,transparent,var(--dk2) 15%,var(--dk2) 85%,transparent)}
+.container{max-width:1000px;margin:0 auto;width:100%}
+.eyebrow{font-size:.76rem;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:var(--o);margin-bottom:.5rem}
+.stitle{font-family:'Bangers',cursive;font-size:clamp(2rem,5vw,3.8rem);letter-spacing:2px;line-height:1.05;margin-bottom:.8rem}
+.ssub{font-size:.98rem;color:var(--mu);font-weight:700;max-width:540px;line-height:1.6}
+
+/* ═══════════════════════ FOTOS DO KAYO ═══════════════════════ */
+/* Strip horizontal rolável */
+.kayo-strip{display:flex;gap:1rem;overflow-x:auto;padding:.5rem 0 1rem;margin:2rem 0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.kayo-strip::-webkit-scrollbar{display:none}
+
+.kfoto{
+  flex-shrink:0;position:relative;
+  width:190px;height:250px;
+  border-radius:16px;overflow:hidden;
+  border:3px solid var(--cbb);
+  cursor:pointer;
+  transition:transform .3s,box-shadow .3s,border-color .3s;
+  background:linear-gradient(135deg,var(--dk3),var(--dk2));
+}
+.kfoto:nth-child(odd){transform:rotate(-2deg)}
+.kfoto:nth-child(even){transform:rotate(1.5deg)}
+.kfoto:hover{transform:rotate(0deg) scale(1.07)!important;box-shadow:0 14px 40px rgba(0,196,204,.3);border-color:var(--t)}
+.kfoto img{width:100%;height:100%;object-fit:cover;display:block}
+.kfoto-fall{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;font-size:3.5rem;background:linear-gradient(135deg,var(--dk3),var(--dk2))}
+.kfoto-fall span{font-size:.72rem;font-weight:800;color:var(--mu);text-align:center;padding:0 .8rem;line-height:1.4}
+.kfoto-cap{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(7,15,26,.92) 0%,transparent 100%);padding:.7rem .75rem .6rem;font-size:.73rem;font-weight:900;color:white;line-height:1.35}
+.kfoto-tag{display:inline-block;background:var(--o);color:white;font-size:.58rem;font-weight:900;letter-spacing:.8px;text-transform:uppercase;padding:.1rem .4rem;border-radius:4px;margin-bottom:.2rem}
+
+/* Galeria grid */
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,45%),1fr));gap:1.2rem;margin-top:2rem}
+.kcard{background:var(--cb);border:2px solid var(--cbb);border-radius:var(--rad);overflow:hidden;cursor:pointer;transition:transform .3s,box-shadow .3s,border-color .3s}
+.kcard:nth-child(odd):hover{transform:rotate(1deg) translateY(-6px);border-color:var(--o);box-shadow:0 14px 36px rgba(255,107,26,.25)}
+.kcard:nth-child(even):hover{transform:rotate(-1deg) translateY(-6px);border-color:var(--t);box-shadow:0 14px 36px rgba(0,196,204,.25)}
+.kcard-img{width:100%;height:175px;object-fit:cover;display:block;background:linear-gradient(135deg,var(--dk3),var(--dk2))}
+.kcard-fall{width:100%;height:175px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--dk3),var(--dk2));gap:.4rem;font-size:2.8rem}
+.kcard-fall small{font-size:.68rem;color:var(--mu);font-weight:800;text-align:center;padding:0 .5rem}
+.kcard-body{padding:.85rem 1rem .8rem}
+.kcard-tag{font-size:.62rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:var(--o);margin-bottom:.2rem}
+.kcard-txt{font-weight:800;font-size:.85rem;line-height:1.4;color:var(--wh)}
+.kcard-react{font-size:1.15rem;margin-top:.35rem}
+
+/* Popup foto que aparece voando */
+.kpopup{
+  position:fixed;z-index:8500;
+  border-radius:var(--rad);overflow:hidden;
+  border:4px solid var(--o);
+  box-shadow:0 24px 64px rgba(0,0,0,.75),0 0 0 8px rgba(255,107,26,.1);
+  max-width:280px;width:85vw;
+  pointer-events:auto;
+}
+.kpopup-enter{animation:kpopIn .55s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes kpopIn{from{opacity:0;transform:scale(.4) rotate(var(--rot))}to{opacity:1;transform:scale(1) rotate(var(--rot))}}
+.kpopup img{width:100%;display:block}
+.kpopup-fall{width:280px;height:200px;background:linear-gradient(135deg,var(--o),var(--t));display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:3rem;gap:.5rem;color:white;font-weight:900;text-align:center;padding:1rem}
+.kpopup-label{background:linear-gradient(135deg,var(--o),var(--o2));color:white;text-align:center;font-weight:900;font-size:.82rem;padding:.55rem}
+.kpopup-x{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.65);border:none;color:white;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.kpopup-x:hover{background:var(--r)}
+
+/* ═══════════════════════ STEPS ═══════════════════════ */
+.stepgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:1.5rem;margin-top:3rem}
+.stepcard{background:var(--cb);border:2px solid var(--cbb);border-radius:var(--rad);padding:2rem 1.5rem;text-align:center;backdrop-filter:blur(8px);transition:transform .3s,box-shadow .3s,border-color .3s;position:relative;overflow:hidden}
+.stepcard::after{content:attr(data-n);position:absolute;right:10px;top:-5px;font-family:'Bangers',cursive;font-size:6rem;color:var(--t);opacity:.06;line-height:1;pointer-events:none}
+.stepcard:hover{transform:translateY(-8px) rotate(-.5deg);box-shadow:0 0 30px rgba(0,196,204,.3);border-color:var(--t)}
+.sico{font-size:3.6rem;display:block;margin-bottom:1rem;animation:flt 3.5s ease-in-out infinite}
+.stepcard:nth-child(2) .sico{animation-delay:1.1s}
+.stepcard:nth-child(3) .sico{animation-delay:2.2s}
+@keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.steptitle{font-family:'Bangers',cursive;font-size:1.55rem;letter-spacing:1px;color:var(--t);margin-bottom:.5rem}
+.stepdesc{font-size:.9rem;color:var(--mu);font-weight:700;line-height:1.6}
+.priceblock{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;max-width:580px;margin:2.5rem auto 0}
+@media(max-width:500px){.priceblock{grid-template-columns:1fr}}
+.pcard{border-radius:var(--rad);padding:1.8rem;text-align:center;position:relative;overflow:hidden}
+.pcard.pay{background:linear-gradient(135deg,var(--o),var(--o2));color:white;box-shadow:0 12px 40px rgba(255,107,26,.35)}
+.pcard.free{background:linear-gradient(135deg,var(--t),var(--t2));color:var(--dk);box-shadow:0 12px 40px rgba(0,196,204,.3)}
+.pico{font-size:2.5rem;margin-bottom:.5rem}
+.plabel{font-size:.72rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;opacity:.8;margin-bottom:.3rem}
+.pval{font-family:'Bangers',cursive;font-size:3.2rem;letter-spacing:2px;line-height:1}
+.pnote{font-size:.8rem;font-weight:700;opacity:.8;margin-top:.4rem}
+
+/* ═══════════════════════ PROGRESS + DUPLAS ═══════════════════════ */
+.progwrap{max-width:580px;margin:0 auto 3rem;background:var(--cb);border:1.5px solid var(--cbb);border-radius:var(--rad);padding:1.5rem 2rem;backdrop-filter:blur(8px)}
+.proglabel{display:flex;justify-content:space-between;font-size:.82rem;font-weight:800;color:var(--mu);margin-bottom:.75rem}
+.proglabel span{color:var(--wh)}
+.progtrack{height:12px;background:var(--cbb);border-radius:30px;overflow:hidden}
+.progfill{height:100%;border-radius:30px;background:linear-gradient(90deg,var(--t),var(--t2));transition:width .8s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 12px var(--t);width:0%}
+.progstat{text-align:center;margin-top:.8rem;font-size:.82rem;font-weight:800;color:var(--mu)}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:1.5rem}
+.dcard{background:var(--cb);border:2px solid var(--cbb);border-radius:var(--rad);padding:1.6rem;backdrop-filter:blur(8px);transition:transform .25s,box-shadow .25s,border-color .3s;position:relative;overflow:hidden}
+.dcard:hover{transform:translateY(-5px);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.dcard.confirmed{border-color:var(--g)}
+.dcard.confirmed::before{content:'✅ CONFIRMADA';position:absolute;top:14px;right:-30px;background:var(--g);color:white;font-size:.62rem;font-weight:900;letter-spacing:1.5px;padding:.25rem 2.8rem;transform:rotate(45deg)}
+.dnum{position:absolute;right:14px;top:4px;font-family:'Bangers',cursive;font-size:4.5rem;color:var(--t);opacity:.07;line-height:1;pointer-events:none}
+.dhead{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.demoji{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--t),var(--t2));display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;transition:background .3s}
+.dcard.confirmed .demoji{background:linear-gradient(135deg,var(--g),#4ade80)}
+.dname{font-family:'Bangers',cursive;font-size:1.4rem;letter-spacing:1px;color:var(--t);transition:color .3s}
+.dcard.confirmed .dname{color:var(--g)}
+.dts{font-size:.7rem;color:var(--mu);font-weight:700}
+.mrow{display:flex;align-items:center;justify-content:space-between;padding:.5rem .75rem;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid var(--cbb);margin-bottom:.5rem}
+.minfo{display:flex;align-items:center;gap:.5rem}
+.mav{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.mav.pay{background:rgba(255,107,26,.2)}.mav.free{background:rgba(0,196,204,.2)}
+.mnametxt{font-weight:800;font-size:.9rem}
+.bdg{font-size:.63rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;padding:.2rem .6rem;border-radius:20px}
+.bdg-pay{background:var(--o);color:white}.bdg-free{background:var(--t);color:var(--dk)}
+.dactions{margin-top:1rem;display:flex;gap:.6rem}
+.dbtn{flex:1;padding:.7rem;border-radius:var(--rads);font-family:'Nunito',sans-serif;font-weight:900;font-size:.86rem;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:.4rem;transition:transform .15s,box-shadow .15s,background .3s;position:relative;overflow:hidden}
+.dbtn::before{content:'';position:absolute;top:-50%;left:-60%;width:40%;height:200%;background:rgba(255,255,255,.2);transform:skewX(-20deg);transition:left .4s}
+.dbtn:hover::before{left:120%}
+.dbtn.cfm{background:linear-gradient(135deg,var(--o),var(--o2));color:white}
+.dbtn.cfm:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,107,26,.4)}
+.dbtn.cfmd{background:linear-gradient(135deg,var(--g),#4ade80);color:white;cursor:default}
+.dbtn.pix{flex:0 0 auto;padding:.7rem 1rem;background:var(--cb);border:1.5px solid var(--cbb);color:var(--wh)}
+.dbtn.pix:hover{border-color:var(--t);color:var(--t);transform:translateY(-2px)}
+
+/* ═══════════════════════ RANKING ═══════════════════════ */
+.rklist{max-width:560px;margin:2rem auto 0;display:flex;flex-direction:column;gap:.75rem}
+.rkitem{display:flex;align-items:center;gap:1rem;background:var(--cb);border:1.5px solid var(--cbb);border-radius:var(--rads);padding:.9rem 1.2rem;backdrop-filter:blur(6px);transition:transform .2s,border-color .2s}
+.rkitem:hover{transform:translateX(4px);border-color:var(--t)}
+.rkitem.ok{border-color:var(--g)}
+.rkpos{font-family:'Bangers',cursive;font-size:1.8rem;min-width:36px;text-align:center;color:var(--mu)}
+.rkpos.gd{color:#FFD700;filter:drop-shadow(0 0 6px #FFD700)}.rkpos.sv{color:#C0C0C0}.rkpos.bz{color:#CD7F32}
+.rknames{flex:1;font-weight:800;font-size:.9rem}
+.rknames small{display:block;font-size:.7rem;color:var(--mu);font-weight:700}
+
+/* ═══════════════════════ MURAL ═══════════════════════ */
+.muralbox{max-width:680px;margin:2rem auto 0;background:var(--cb);border:1.5px solid var(--cbb);border-radius:var(--rad);padding:1.5rem;backdrop-filter:blur(8px)}
+.muralmsgs{max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:.75rem;margin-bottom:1rem;padding-right:.2rem}
+.mmsg{display:flex;gap:.75rem;animation:msgin .35s ease}
+@keyframes msgin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.mav2{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--t),var(--o));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.mbub{background:rgba(255,255,255,.06);border:1px solid var(--cbb);border-radius:0 var(--rads) var(--rads) var(--rads);padding:.6rem .9rem;font-size:.87rem;font-weight:700;line-height:1.5;flex:1}
+.mbub .mbn{font-size:.7rem;color:var(--t);font-weight:900;margin-bottom:.2rem}
+.mbub .mbt{font-size:.65rem;color:var(--mu);margin-top:.2rem;font-weight:700}
+.mural-row{display:flex;gap:.6rem;flex-wrap:wrap;width:100%}
+.mural-inp-name{width:120px;min-width:0;padding:.7rem .9rem;background:rgba(255,255,255,.06);border:1.5px solid var(--cbb);border-radius:var(--rads);color:var(--wh);font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;outline:none;flex-shrink:0;transition:border-color .2s;-webkit-appearance:none}
+.mural-inp-name:focus{border-color:var(--o)}
+.mural-inp{flex:1;min-width:0;padding:.7rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid var(--cbb);border-radius:var(--rads);color:var(--wh);font-family:'Nunito',sans-serif;font-weight:700;font-size:.87rem;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.mural-inp:focus{border-color:var(--t)}
+.mural-send{padding:.7rem 1.1rem;border-radius:var(--rads);background:linear-gradient(135deg,var(--t),var(--t2));color:var(--dk);border:none;font-weight:900;font-size:.87rem;cursor:pointer;transition:transform .15s;white-space:nowrap}
+.mural-send:hover{transform:scale(1.05)}
+
+/* ═══════════════════════ FAQ ═══════════════════════ */
+.faqlist{display:flex;flex-direction:column;gap:.75rem;max-width:680px;margin:2rem auto 0}
+.faqitem{background:var(--cb);border:2px solid var(--cbb);border-radius:var(--rads);overflow:hidden;backdrop-filter:blur(6px);transition:border-color .2s}
+.faqitem.open{border-color:var(--t)}
+.faqq{padding:1.1rem 1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:.94rem;user-select:none;gap:1rem;transition:color .2s}
+.faqq:hover{color:var(--t)}
+.faqarr{transition:transform .3s;font-size:.9rem;flex-shrink:0}
+.faqitem.open .faqarr{transform:rotate(180deg)}
+.faqa{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;font-size:.9rem;color:var(--mu);font-weight:700;line-height:1.65;padding:0 1.4rem}
+.faqitem.open .faqa{max-height:240px;padding:0 1.4rem 1.2rem}
+
+/* ═══════════════════════ FOOTER ═══════════════════════ */
+footer{background:var(--dk2);border-top:1.5px solid var(--cbb);text-align:center;padding:3.5rem 1.5rem 2rem;position:relative;z-index:1;overflow:hidden}
+footer::before{content:'🚣';position:absolute;font-size:18rem;opacity:.025;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.ftbig{font-family:'Bangers',cursive;font-size:clamp(2rem,5vw,3rem);letter-spacing:2px;color:var(--t);margin-bottom:.5rem}
+.ftnote{font-size:.88rem;color:var(--mu);font-weight:700;margin-bottom:1.8rem;line-height:1.6}
+.socrow{display:flex;justify-content:center;gap:.75rem;flex-wrap:wrap;margin-bottom:2rem}
+.socbtn{display:inline-flex;align-items:center;gap:.4rem;background:var(--cb);border:1.5px solid var(--cbb);color:var(--wh);text-decoration:none;padding:.5rem 1.1rem;border-radius:30px;font-weight:800;font-size:.82rem;transition:background .2s,border-color .2s,color .2s,transform .15s}
+.socbtn:hover{background:var(--t);border-color:var(--t);color:var(--dk);transform:translateY(-2px)}
+/* Link sutil pro dev no rodapé */
+.ft-dev{font-size:.7rem;color:rgba(255,255,255,.2);cursor:pointer;font-weight:700;transition:color .25s;margin-top:.3rem;display:inline-block}
+.ft-dev:hover{color:var(--o)}
+
+/* ═══════════════════════ TOAST ═══════════════════════ */
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-130px);z-index:9000;background:var(--dk2);border:2px solid var(--t);border-radius:var(--rad);padding:.9rem 1.5rem;max-width:380px;width:90%;text-align:center;font-weight:800;font-size:.88rem;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:transform .5s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast-e{font-size:1.6rem;display:block;margin-bottom:.2rem}
+
+/* ═══════════════════════ MISC ═══════════════════════ */
+.freact{position:fixed;z-index:400;pointer-events:none;font-size:2.4rem;animation:rflt 1.5s ease-out forwards}
+@keyframes rflt{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-120px) scale(1.8)}}
+#ccanvas{position:fixed;inset:0;z-index:490;pointer-events:none;display:none}
+.bubble{position:fixed;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(0,196,204,.22),rgba(0,196,204,.03));border:1.5px solid rgba(0,196,204,.2);pointer-events:none;z-index:2;animation:bfl linear infinite}
+@keyframes bfl{0%{transform:translateY(100vh) translateX(0);opacity:0}10%{opacity:.5}90%{opacity:.5}100%{transform:translateY(-20vh) translateX(var(--dr));opacity:0}}
+/* Pato */
+#bigDuck{position:fixed;bottom:-120px;right:6%;z-index:5;font-size:4.5rem;animation:dkrise 3s ease-out forwards,dkbob 2.5s ease-in-out 3s infinite;cursor:pointer;user-select:none;filter:drop-shadow(0 6px 18px rgba(255,215,0,.4));transition:filter .3s}
+@keyframes dkrise{from{bottom:-120px;opacity:0}to{bottom:7rem;opacity:1}}
+@keyframes dkbob{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-18px) rotate(5deg)}}
+/* Reveal */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .65s ease,transform .65s ease}
+.rv.in{opacity:1;transform:translateY(0)}
+/* Modal */
+.movlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .3s}
+.movlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--dk2);border:2px solid var(--cbb);border-radius:24px;padding:2.5rem 2rem;max-width:440px;width:100%;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.6);transform:scale(.85) translateY(20px);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.movlay.open .modal{transform:scale(1) translateY(0)}
+.memoji{font-size:4.5rem;display:block;margin-bottom:1rem;animation:flt 2s ease-in-out infinite}
+.mtitle{font-family:'Bangers',cursive;font-size:2.2rem;letter-spacing:2px;color:var(--t);margin-bottom:.5rem}
+.mbody{font-size:.93rem;color:var(--mu);font-weight:700;line-height:1.65;margin-bottom:1.5rem;white-space:pre-line}
+.macts{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+.mclose{padding:.7rem 2rem;border-radius:30px;background:linear-gradient(135deg,var(--o),var(--o2));color:white;border:none;font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;cursor:pointer;transition:transform .15s}
+.mclose:hover{transform:scale(1.05)}
+.mpix2{padding:.7rem 1.5rem;border-radius:30px;background:var(--cb);border:2px solid var(--t);color:var(--t);font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;cursor:pointer;transition:background .2s,color .2s}
+.mpix2:hover{background:var(--t);color:var(--dk)}
+.pixbox{background:var(--dk3);border:2px dashed var(--t);border-radius:var(--rads);padding:1.2rem;margin:.75rem 0;font-family:monospace;font-size:.88rem;color:var(--t);letter-spacing:1px;word-break:break-all;cursor:pointer;transition:background .2s;position:relative}
+.pixbox:hover{background:rgba(0,196,204,.07)}
+.pixbox::after{content:'📋 Copiar';position:absolute;bottom:-10px;right:10px;background:var(--t);color:var(--dk);font-family:'Nunito',sans-serif;font-weight:900;font-size:.62rem;letter-spacing:1px;padding:.2rem .6rem;border-radius:6px;opacity:0;transition:opacity .2s;pointer-events:none}
+.pixbox:hover::after{opacity:1}
+
+.sync-badge{text-align:center;margin:0 auto 1.2rem;padding:.3rem 1rem;border-radius:30px;font-size:.75rem;font-weight:800;display:block;width:fit-content;transition:all .3s}
+.sync-badge.syncing{background:rgba(255,211,61,.12);color:var(--y);border:1px solid rgba(255,211,61,.3)}
+.sync-badge.ok{background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.3)}
+.sync-badge.err{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25)}
+
+/* ═══════════ MOBILE ═══════════ */
+@media(max-width:600px){
+  /* Nav */
+  nav{padding:.5rem 1rem;gap:.3rem}
+  .nlinks a:not(.keep){display:none}
+  .nlogo{font-size:1.2rem}
+  .livebdg{font-size:.65rem;padding:.22rem .6rem}
+  .npill{font-size:.7rem;padding:.25rem .6rem}
+
+  /* Hero */
+  .hero{padding:5.5rem 1rem 4rem}
+  .hbadge{font-size:.68rem;padding:.35rem 1rem;letter-spacing:1px}
+  .ctag{gap:.6rem}
+  .ctag .btn{padding:.7rem 1.2rem;font-size:.82rem}
+  .statsbar{gap:1rem;padding:1.1rem 1rem}
+  .snum{font-size:2rem}
+  .slabel{font-size:.6rem}
+
+  /* Sections */
+  .sec{padding:3.5rem 1rem}
+  .stitle{font-size:clamp(1.7rem,8vw,2.8rem)}
+  .ssub{font-size:.88rem}
+
+  /* Strip de fotos */
+  .kfoto{width:150px;height:200px}
+
+  /* Steps */
+  .stepgrid{gap:1rem;margin-top:2rem}
+  .stepcard{padding:1.5rem 1rem}
+  .sico{font-size:2.8rem}
+
+  /* Price block */
+  .priceblock{grid-template-columns:1fr;max-width:100%;gap:.8rem}
+  .pval{font-size:2.5rem}
+
+  /* Botão Sympla */
+  .btn-o[href*="sympla"]{font-size:.88rem;padding:.8rem 1.5rem}
+
+  /* Duplas */
+  .dgrid{grid-template-columns:1fr}
+  .dcard{padding:1.2rem}
+  .dname{font-size:1.2rem}
+  .dbtn{font-size:.8rem;padding:.6rem}
+  .dactions{gap:.4rem}
+
+  /* Galeria */
+  .kgrid{grid-template-columns:1fr 1fr;gap:.75rem}
+  .kcard-img,.kcard-fall{height:130px}
+  .kcard-body{padding:.6rem .75rem .6rem}
+  .kcard-txt{font-size:.78rem}
+
+  /* Mural */
+  .muralbox{padding:1rem}
+  .mural-row{flex-direction:column;gap:.5rem}
+  .mural-inp-name{width:100%}
+  .mural-inp{width:100%}
+  .mural-send{width:100%;justify-content:center}
+  .muralmsgs{max-height:240px}
+
+  /* FAQ */
+  .faqq{font-size:.85rem;padding:.9rem 1.1rem}
+  .faqa{font-size:.83rem}
+
+  /* Pato */
+  #bigDuck{right:2%;font-size:3rem;bottom:5rem}
+
+  /* FABs */
+  .fabs{bottom:1rem;right:1rem;gap:.4rem}
+  .fab{width:40px;height:40px;font-size:.95rem}
+
+  /* Dev card */
+  #devcard{width:calc(100vw - 32px);bottom:5rem;right:-110vw}
+  #devcard.show{right:16px}
+
+  /* Toast */
+  .toast{width:calc(100vw - 2rem);max-width:100%;font-size:.82rem;padding:.75rem 1rem}
+
+  /* Popup foto */
+  .kpopup{width:80vw;max-width:260px}
+
+  /* Modal */
+  .modal{padding:2rem 1.3rem}
+  .mtitle{font-size:1.8rem}
+  .mbody{font-size:.85rem}
+  .mclose,.mpix2{padding:.6rem 1.4rem;font-size:.88rem}
+
+  /* Ranking */
+  .rkitem{padding:.7rem .9rem}
+  .rknames{font-size:.8rem}
+  .rkpos{font-size:1.4rem;min-width:28px}
+}
+
+/* Tablet intermediário */
+@media(max-width:768px) and (min-width:601px){
+  .sec{padding:4rem 1.2rem}
+  .dgrid{grid-template-columns:1fr}
+  .kgrid{grid-template-columns:repeat(2,1fr)}
+  .priceblock{max-width:100%}
+  .ctag{gap:.75rem}
+}
+</style>
+</head>
+<body class="tempestade">
+
+<!-- VIDEO BG -->
+<div id="vbg">
+  <video id="kvid" autoplay muted loop playsinline preload="auto">
+    <source src="kayo-dance.mp4" type="video/mp4">
+  </video>
+  <div id="vov"></div>
+</div>
+
+<!-- ÁUDIO -->
+<audio id="bgm" loop preload="none">
+  <source src="kayo-dance.mp3" type="audio/mpeg">
+</audio>
+
+<!-- FABs -->
+<div class="fabs">
+  <button class="fab fab-m" id="fabM" onclick="toggleMusic()" title="Música 🎵">🎵</button>
+  <button class="fab fab-v" id="fabV" onclick="toggleVid()" title="Vídeo">⏸</button>
+  <button class="fab fab-s" id="fabS" onclick="toggleSfx()" title="Sons">🔇</button>
+</div>
+
+<!-- NOTIFICAÇÃO DEV PEDREXXX -->
+<div id="devcard">
+  <span class="dc-time" id="dctime"></span>
+  <button class="dc-close" onclick="hideCard()">✕</button>
+  <div class="dc-row">
+    <div class="dc-photo" id="dcphoto">
+      <img src="pedrexxx.png" alt="Pedrexxx"
+           onerror="this.parentElement.innerHTML='<span style=font-size:1.8rem>👨‍💻</span>'">
+    </div>
+    <div class="dc-info">
+      <div class="dc-name">Dev by Pedrexxx 👨‍💻</div>
+      <div class="dc-role">Criador deste site épico</div>
+    </div>
+  </div>
+  <div class="dc-msg" id="dcmsg">Oi, fui eu que fiz esse site. De nada. 😌</div>
+  <div class="dc-actions">
+    <button class="dc-btn" onclick="hideCard()">Ignorar 🙄</button>
+    <button class="dc-btn dc-main" onclick="thankDev()">Obrigado! 🙏</button>
+  </div>
+</div>
+
+<!-- PATO GIGANTE -->
+<div id="bigDuck" onclick="duckClick()">🦆</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-e" id="te">🦆</span>
+  <span id="tm">mensagem</span>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nlogo" id="nlogo" onclick="logoClick()">🚣 Kayo Fest</div>
+  <div class="nlinks">
+    <a href="#sec-how">Como funciona</a>
+    <a href="#sec-duplas">Duplas</a>
+    <a href="#sec-gallery">Galeria 😂</a>
+    <a href="#sec-mural" class="keep">Mural</a>
+    <div class="livebdg"><div class="ldot"></div><span id="vc">0</span> online</div>
+    <button class="npill" onclick="toggleTheme()"><span id="tlbl">☀️ Sol</span></button>
+  </div>
+</nav>
+
+<!-- PARTICLES -->
+<div class="pts" id="pts"></div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hcont rv">
+    <div class="hbadge">🎂 Aniversário · Aventura · Muita Zoeira</div>
+    <h1 class="htitle">
+      <span class="t1">Canoagem</span><br>
+      <span class="t2">do Kayo</span> 🚣‍♂️<br>
+      <span class="t3">Forme sua dupla!</span>
+    </h1>
+    <p class="hsub">
+      12 almas corajosas · 6 duplas · <strong>1 missão épica:</strong><br>
+      remar, comemorar e provavelmente molhar o Kayo primeiro 🌊
+    </p>
+    <div class="ctag">
+      <a href="#sec-how"     class="btn btn-o">🗺️ Entender o esquema</a>
+      <a href="#sec-duplas"  class="btn btn-t">👥 Ver duplas</a>
+      <a href="#sec-gallery" class="btn btn-g">😂 Fotos do Kayo</a>
+    </div>
+    <div class="statsbar">
+      <div class="stat"><div class="snum">12</div><div class="slabel">Aventureiros</div></div>
+      <div class="stat"><div class="snum">6</div><div class="slabel">Duplas</div></div>
+      <div class="stat"><div class="snum o" id="stcfm">0</div><div class="slabel">Confirmadas</div></div>
+      <div class="stat"><div class="snum y">R$89</div><div class="slabel">Por dupla</div></div>
+    </div>
+  </div>
+  <div class="wavewrap"><div class="wv wv1"></div><div class="wv wv2"></div></div>
+</section>
+
+<!-- ═══ COMO FUNCIONA ═══ -->
+<section class="sec sec-alt" id="sec-how">
+  <div class="container">
+    <div class="rv">
+      <div class="eyebrow">📋 O plano mestre</div>
+      <h2 class="stitle">Como Funciona?</h2>
+      <p class="ssub">3 passos. Mais simples que a remada do Kayo (e olha que a dele é bem questionável 😂)</p>
+    </div>
+
+    <!-- Strip de fotos do Kayo -->
+    <div class="kayo-strip rv" id="strip"></div>
+
+    <div class="stepgrid">
+      <div class="stepcard rv" data-n="1"><span class="sico">🤝</span><div class="steptitle">Forme sua dupla</div><p class="stepdesc">Escolha um parceiro. Amigo, namorado(a), primo que deve favor ou qualquer um que não corra ao ver o rio.</p></div>
+      <div class="stepcard rv" data-n="2"><span class="sico">💸</span><div class="steptitle">Um paga, outro sorri</div><p class="stepdesc">Um paga R$89. O outro ganha cupom 100% OFF e finge que ajudou. A dívida moral fica entre vocês 😇</p></div>
+      <div class="stepcard rv" data-n="3"><span class="sico">🚣‍♀️</span><div class="steptitle">Rema e se diverte!</div><p class="stepdesc">Aparece no dia, bota o colete (OBRIGATÓRIO!!), pega o remo e celebra o Kayo da forma certa: molhado e aos berros 🎉</p></div>
+    </div>
+    <div class="priceblock rv">
+      <div class="pcard pay"><div class="pico">💳</div><div class="plabel">Pagante da dupla</div><div class="pval">R$ 89</div><div class="pnote">Compra feita na plataforma Sympla</div></div>
+      <div class="pcard free"><div class="pico">🎟️</div><div class="plabel">Cupom de desconto</div><div class="pval">100% OFF</div><div class="pnote">Parceiro recebe cupom de ingresso grátis 🎊</div></div>
+    </div>
+    <div class="rv" style="text-align:center;margin-top:2rem">
+      <a href="https://www.sympla.com.br/evento/niver-do-kayo--29-de-mar/3352919"
+         target="_blank" rel="noopener"
+         class="btn btn-o" style="display:inline-flex;font-size:1.05rem;padding:1rem 2.5rem;box-shadow:0 8px 28px rgba(255,107,26,.5)">
+        🎟️ Comprar ingresso na Sympla
+      </a>
+      <p style="margin-top:.75rem;font-size:.78rem;color:var(--mu);font-weight:700">
+        O cupom de 100% será enviado pela organização ao parceiro de dupla 🎊
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DUPLAS ═══ -->
+<section class="sec" id="sec-duplas">
+  <div class="container">
+    <div class="rv">
+      <div class="eyebrow">👥 Os times</div>
+      <h2 class="stitle">As 6 Duplas</h2>
+      <p class="ssub">Confirme sua dupla! Fica salvo no seu navegador 🚣</p>
+    </div>
+    <!-- Badge de sincronização -->
+    <div id="sync-badge" class="sync-badge syncing" style="text-align:center;margin:0 auto 1rem;display:inline-block;padding:.3rem 1rem;border-radius:30px;font-size:.75rem;font-weight:800;background:rgba(255,211,61,.12);color:var(--y);border:1px solid rgba(255,211,61,.3);width:fit-content;display:block;">⏳ Sincronizando...</div>
+
+    <div class="progwrap rv">
+      <div class="proglabel"><span>Progresso das confirmações</span><span><span id="pgcnt">0</span>/6 duplas</span></div>
+      <div class="progtrack"><div class="progfill" id="pgfill"></div></div>
+      <div class="progstat" id="pgstat">⏳ Nenhuma dupla confirmada ainda... galera, acorda!</div>
+    </div>
+    <div class="dgrid" id="dgrid"></div>
+  </div>
+</section>
+
+<!-- ═══ RANKING ═══ -->
+<section class="sec sec-alt" id="sec-rank" style="text-align:center">
+  <div class="container">
+    <div class="rv"><div class="eyebrow">🏆 Placar</div><h2 class="stitle">Quem já confirmou?</h2><p class="ssub" style="margin:0 auto">Os primeiros ganham orgulho eterno e zero prêmio 😂</p></div>
+    <div class="rklist" id="rklist"></div>
+  </div>
+</section>
+
+<!-- ═══ GALERIA DO KAYO ═══ -->
+<section class="sec" id="sec-gallery" style="text-align:center">
+  <div class="container">
+    <div class="rv">
+      <div class="eyebrow">📸 Arquivo confidencial</div>
+      <h2 class="stitle">A Galeria do Kayo 😂</h2>
+      <p class="ssub" style="margin:0 auto">Ele não autorizou. A gente usou assim mesmo. Feliz aniversário! 🎂</p>
+    </div>
+    <div class="kgrid rv" id="kgrid"></div>
+    <p style="margin-top:1.5rem;font-size:.78rem;color:var(--mu);font-weight:700;opacity:.7">* Nenhum Kayo foi ferido. Fisicamente. Emocionalmente, sem garantias. 😅</p>
+  </div>
+</section>
+
+<!-- ═══ MURAL ═══ -->
+<section class="sec sec-alt" id="sec-mural" style="text-align:center">
+  <div class="container">
+    <div class="rv"><div class="eyebrow">💬 Mural do Kayo</div><h2 class="stitle">Deixe sua mensagem!</h2><p class="ssub" style="margin:0 auto">Elogio, zoeira ou declaração de amor platônico — tudo é bem-vindo 🤣</p></div>
+    <div class="muralbox rv">
+      <div class="muralmsgs" id="muralmsgs"></div>
+      <div class="mural-row">
+        <input class="mural-inp-name" id="mname" placeholder="Seu nome" maxlength="20">
+        <input class="mural-inp" id="mtext" placeholder="Sua mensagem 💬" maxlength="120" onkeydown="if(event.key==='Enter')sendMural()">
+        <button class="mural-send" onclick="sendMural()">🚀 Enviar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section class="sec" id="sec-faq" style="text-align:center">
+  <div class="container">
+    <div class="rv"><div class="eyebrow">❓ FAQ</div><h2 class="stitle">Dúvidas? 🤔</h2></div>
+    <div class="faqlist" id="faqlist"></div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="ftbig">🚣 Vai ser incrível, Kayo! 🎂</div>
+  <p class="ftnote">Dúvidas sobre o ingresso? Chama o Kayo no WhatsApp!<br><small style="opacity:.4">Site apenas organizacional, não processa pagamentos.</small></p>
+  <div class="socrow">
+    <a href="https://wa.me/5591984958123" target="_blank" rel="noopener" class="socbtn">💬 Falar com o Kayo no WhatsApp</a>
+  </div>
+  <span class="ft-dev" onclick="showCard()">feito por alguém muito suspeito 👀</span>
+</footer>
+
+<!-- MODAL -->
+<div class="movlay" id="movlay">
+  <div class="modal">
+    <span class="memoji" id="memoji">🎉</span>
+    <div class="mtitle" id="mtitle"></div>
+    <div class="mbody"  id="mbody"></div>
+    <div id="mextra"></div>
+    <div class="macts"  id="macts"></div>
+  </div>
+</div>
+<canvas id="ccanvas"></canvas>
+
+<script>
+/* ═══════════════════════════════════════
+   ⚙️ CONFIGURE AQUI
+═══════════════════════════════════════ */
+const CFG = {
+  pixKey:   "kayo@email.com",   // ← Chave Pix real
+  pixNome:  "Kayo Sobrenome",   // ← Nome do titular
+  stateKey: "canoagem_kayo_v5",
+  muralKey: "canoagem_kayo_mural_v5",
+};
+
+/* Edite os nomes das duplas e quem paga (0=primeiro, 1=segundo) */
+const DUPLAS = [
+  {id:1,nomes:["Fulano Silva",   "Ciclano Souza"],  pagante:0,emoji:"🚣"},
+  {id:2,nomes:["Beltrana Costa", "Joãozinho Lima"], pagante:1,emoji:"🌊"},
+  {id:3,nomes:["Marisol Ferre",  "Toninho Alves"],  pagante:0,emoji:"🦆"},
+  {id:4,nomes:["Pedrão Santos",  "Clarinha Nunes"], pagante:1,emoji:"🛶"},
+  {id:5,nomes:["Zé Augusto",     "Fernanda Gomes"], pagante:0,emoji:"🎉"},
+  {id:6,nomes:["Ritinha Barb",   "Marcos Vieira"],  pagante:1,emoji:"🏄"},
+];
+
+/*
+  FOTOS DO KAYO:
+  - Coloque os arquivos na mesma pasta do HTML
+  - Nomes sugeridos: kayo1.jpg, kayo2.jpg, kayo3.jpg... (até kayo6.jpg)
+  - Edite caption, tag e emoji de cada foto abaixo
+  - Se o arquivo não existir, aparece um placeholder engraçado automaticamente
+*/
+const KAYO_FOTOS = [
+  {f:"kayo1.jpg", cap:"Quando descobriu que tem que remar de verdade",   tag:"antes do rio",          emoji:"😱", react:"😂"},
+  {f:"kayo2.jpg", cap:"Posando pra foto mas já pensando em desistir",    tag:"motivado (???)",        emoji:"🤔", react:"😅"},
+  {f:"kayo3.jpg", cap:"'Eu sei nadar' — Kayo, segundos antes da queda", tag:"declaração histórica",  emoji:"🌊", react:"💀"},
+  {f:"kayo4.jpg", cap:"A cara quando falaram o preço do ingresso",       tag:"reação ao Pix",         emoji:"😬", react:"💸"},
+  {f:"kayo5.jpg", cap:"Treino intenso: levantou o controle remoto",      tag:"preparação física",     emoji:"😴", react:"🏋️"},
+  {f:"kayo6.jpg", cap:"Feliz aniversário! Que venham muitos anos de canoagem obrigatória 🎂", tag:"feliz aniversário!", emoji:"🎂", react:"🎉"},
+];
+
+/* Frases da notificação Pedrexxx */
+const DEV_MSGS = [
+  "Oi, fui eu que fiz esse site. De nada. 😌",
+  "Trabalhei noites seguidas nisso. Beijo no coração 💔",
+  "Se tiver bug, não é bug — é experiência premium ✨",
+  "Esse site rodou no meu computador. No seu é problema seu 😂",
+  "Feito com ☕ café e amor não correspondido 🥲",
+  "Cobro barato. Mas cobro. Fala comigo depois 😏",
+];
+
+/* Frases do toast randômico */
+const TOASTS = [
+  {e:"🦆", m:"O pato aprova esse site. Com diplomas e tudo."},
+  {e:"🚣", m:"Psst... você já treinou a remada?"},
+  {e:"💦", m:"Dica profissional: coloca o celular num saco plástico"},
+  {e:"🌊", m:"A água vai estar GELADA. Beijo, tchau."},
+  {e:"🏄", m:"Kayo disse que vai na frente. Mentira total."},
+  {e:"🛶", m:"A canoa não afunda... geralmente"},
+  {e:"☕", m:"Pedrexxx tomou 9 cafés fazendo este site"},
+  {e:"🎂", m:"Feliz aniversário Kayo! (você vai se molhar)"},
+  {e:"📸", m:"Kayo não autorizou as fotos. Usamos mesmo assim."},
+  {e:"⚓", m:"Nenhum pato foi ferido neste site. Provavelmente."},
+];
+
+const FAQS = [
+  {q:"Posso trocar de dupla depois?",       a:"Pode sim, mas fala logo com o organizador antes de confirmar. Depois que formou, formou — como a ressaca de aniversário 😄"},
+  {q:"O pagamento é online?",               a:"Sim! O ingresso é comprado diretamente na Sympla pelo link no site. O cupom de 100% pra quem não paga é enviado pela organização 🎟️"},
+  {q:"Preciso saber nadar?",                a:"Não precisa ser campeão olímpico, mas boiar ajuda. Colete salva-vidas obrigatório. Vai ser seguro... e molhado."},
+  {q:"O que acontece se eu cair na água?",  a:"Você vira meme do grupo por 3 anos. Traga roupa extra e bom humor 🌊🤣"},
+  {q:"Quem é o organizador?",               a:"O próprio Kayo ou alguém de confiança. Chama no WhatsApp, links no rodapé!"},
+  {q:"Vai ter foto?",                       a:"SIM. E as piores vão pra stories, WhatsApp e possivelmente moldura na sua casa 📸😂"},
+  {q:"O Kayo sabe remar de verdade?",       a:"...vamos dizer que ele vai aprender no dia. 🚣‍♂️ (silêncio constrangedor)"},
+];
+
+const SEEDED_MURAL = [
+  {name:"Kayo Bot 🤖",       text:"Que site lindo! Alguém contrata esse dev! 🎉",               time:Date.now()-600000,av:"🤖"},
+  {name:"Juiz do Rio ⚖️",    text:"AVISO: Cair na água não é responsabilidade de ninguém aqui 😂",time:Date.now()-400000,av:"⚖️"},
+  {name:"Pato Oficial 🦆",   text:"EU. ESTOU. PRONTO. TREINO: 3 SEMANAS. PODEM VIR.",            time:Date.now()-200000,av:"🦆"},
+  {name:"GPS do Kayo 🗺️",   text:"Recalculando rota... destino: fundo do rio 🌊",               time:Date.now()-80000, av:"🗺️"},
+];
+
+/* ═══════════════════════════════════════
+   STATE — Neon DB via Netlify Functions
+   GET/PUT /api/duplas  |  GET/POST /api/mural
+═══════════════════════════════════════ */
+let state = { duplas: Object.fromEntries(DUPLAS.map(d=>[d.id,{id:d.id,confirmada:false,confirmedAt:null}])) };
+
+// ── Carrega duplas do banco ──
+async function loadDuplas() {
+  try {
+    setSyncStatus('syncing');
+    const res = await fetch('/api/duplas');
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    state.duplas = await res.json();
+    setSyncStatus('ok');
+  } catch(e) {
+    console.warn('Usando estado local (offline):', e);
+    setSyncStatus('err');
+  }
+}
+
+// ── Status de sincronização (badge no topo das duplas) ──
+function setSyncStatus(s) {
+  const el = document.getElementById('sync-badge');
+  if (!el) return;
+  const map = {
+    syncing: { cls:'syncing', txt:'⏳ Sincronizando...' },
+    ok:      { cls:'ok',      txt:'🟢 Dados em tempo real' },
+    err:     { cls:'err',     txt:'⚠️ Modo offline' },
+  };
+  const { cls, txt } = map[s] || map.ok;
+  el.className = 'sync-badge ' + cls;
+  el.textContent = txt;
+}
+
+/* ═══════════════════════════════════════
+   FOTOS DO KAYO — helpers
+═══════════════════════════════════════ */
+function imgFallback(emoji, txt){
+  return `<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;background:linear-gradient(135deg,var(--dk3),var(--dk2))">
+    <span style="font-size:3rem">${emoji}</span>
+    <span style="font-size:.7rem;font-weight:800;color:var(--mu);text-align:center;padding:0 .8rem;line-height:1.4">${txt}</span>
+  </div>`;
+}
+function safeImg(src, cls, emoji, fallTxt){
+  return `<img src="${src}" class="${cls}" alt=""
+    onerror="this.outerHTML='<div class=\\"${cls}\\" style=\\"width:100%;height:100%\\">${imgFallback(emoji,fallTxt).replace(/"/g,"'")}</div>'">`;
+}
+
+/* STRIP na seção "como funciona" */
+function renderStrip(){
+  const strip = document.getElementById('strip');
+  const fotos = KAYO_FOTOS.slice(0,4);
+  strip.innerHTML = fotos.map((p,i)=>`
+    <div class="kfoto" onclick="popupFoto('${p.f}','${p.cap}','${p.emoji}')">
+      ${safeImg(p.f,'kfoto-img',p.emoji,'(foto do Kayo aqui)')}
+      <div class="kfoto-cap"><div class="kfoto-tag">📸 foto real</div>${p.cap}</div>
+    </div>`).join('');
+  // fix: img inside kfoto needs specific style
+  strip.querySelectorAll('.kfoto-img').forEach(img=>{
+    img.style.cssText='width:100%;height:100%;object-fit:cover;display:block';
+  });
+}
+
+/* GALERIA */
+function renderGallery(){
+  const grid = document.getElementById('kgrid');
+  grid.innerHTML = KAYO_FOTOS.map(p=>`
+    <div class="kcard" onclick="popupFoto('${p.f}','${p.cap}','${p.emoji}')">
+      <div style="width:100%;height:175px;overflow:hidden">
+        ${safeImg(p.f,'kcard-img',p.emoji,'(foto do Kayo)')}
+      </div>
+      <div class="kcard-body">
+        <div class="kcard-tag">${p.tag}</div>
+        <div class="kcard-txt">${p.cap}</div>
+        <div class="kcard-react">${p.react}</div>
+      </div>
+    </div>`).join('');
+  grid.querySelectorAll('.kcard-img').forEach(img=>{
+    img.style.cssText='width:100%;height:175px;object-fit:cover;display:block';
+  });
+}
+
+/* POPUP de foto voando no centro */
+let popupEl=null;
+function popupFoto(file,cap,emoji){
+  if(popupEl){popupEl.remove();popupEl=null;}
+  const rots=['-4deg','3deg','-2deg','4deg','-1.5deg'];
+  const rot=rots[Math.floor(Math.random()*rots.length)];
+  const popup=document.createElement('div');
+  popup.className='kpopup kpopup-enter';
+  popup.style.cssText=`--rot:${rot};position:fixed;top:50%;left:50%;transform:translateY(-50%) translateX(-50%);z-index:8500;`;
+  popup.innerHTML=`
+    <button class="kpopup-x" onclick="this.parentElement.remove()">✕</button>
+    <img src="${file}" style="width:100%;display:block" alt="${cap}"
+      onerror="this.outerHTML='<div class=kpopup-fall><span style=font-size:3rem>${emoji}</span><span style=font-size:.85rem;font-weight:800;text-align:center;padding:0 1rem>${cap}</span></div>'">
+    <div class="kpopup-label">${cap}</div>`;
+  document.body.appendChild(popup);
+  popupEl=popup;
+  launchConfetti();
+  setTimeout(()=>{if(popupEl===popup){popup.remove();popupEl=null;}},6000);
+}
+
+/* ═══════════════════════════════════════
+   DUPLAS
+═══════════════════════════════════════ */
+function renderDuplas(){
+  document.getElementById('dgrid').innerHTML=DUPLAS.map(d=>{
+    const ds=state.duplas[d.id]||{};
+    const p=d.pagante,c=p===0?1:0,ok=ds.confirmada;
+    const ts=ok&&ds.confirmedAt?`✅ ${new Date(ds.confirmedAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}`:'Aguardando confirmação...';
+    return `<div class="dcard rv${ok?' confirmed':''}" id="dc-${d.id}">
+      <div class="dnum">${d.emoji}</div>
+      <div class="dhead">
+        <div class="demoji" style="${ok?'background:linear-gradient(135deg,var(--g),#4ade80)':''}">${d.emoji}</div>
+        <div><div class="dname" style="${ok?'color:var(--g)':''}">Dupla ${d.id}</div><div class="dts">${ts}</div></div>
+      </div>
+      <div>
+        <div class="mrow"><div class="minfo"><div class="mav pay">💸</div><span class="mnametxt">${d.nomes[p]}</span></div><span class="bdg bdg-pay">Pagante</span></div>
+        <div class="mrow"><div class="minfo"><div class="mav free">🎟️</div><span class="mnametxt">${d.nomes[c]}</span></div><span class="bdg bdg-free">Cupom</span></div>
+      </div>
+      <div class="dactions">
+        <button class="dbtn ${ok?'cfmd':'cfm'}" id="db-${d.id}" onclick="confirmar(${d.id})" ${ok?'disabled':''}>
+          ${ok?'✅ Confirmada!':'🤝 Confirmar dupla'}
+        </button>
+
+      </div>
+    </div>`;
+  }).join('');
+  initReveal();
+}
+
+async function confirmar(id){
+  const ds=state.duplas[id];if(!ds||ds.confirmada)return;
+  const btn=document.getElementById('db-'+id);
+  if(btn){btn.disabled=true;btn.textContent='⏳ Salvando...';}
+  try {
+    const res = await fetch('/api/duplas', {
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({id, confirmedBy:'visitante'})
+    });
+    if(res.status===409){await loadDuplas();renderDuplas();updateProgress();updateRanking();return;}
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const updated = await res.json();
+    state.duplas[id] = updated;
+  } catch(e){
+    console.warn('Fallback offline:',e);
+    state.duplas[id]={...ds,confirmada:true,confirmedAt:new Date().toISOString()};
+  }
+  renderDuplas();updateProgress();updateRanking();
+  launchConfetti();spawnReactions(id);if(sfxOn)playTune('confirm');
+  const d=DUPLAS.find(x=>x.id===id);
+  const msgs=[
+    `${d.nomes[d.pagante]} e ${d.nomes[d.pagante===0?1:0]} estão na canoa! 🚣
+
+${d.nomes[d.pagante]} paga R$89 e ${d.nomes[d.pagante===0?1:0]} ganha o cupom.
+
+Falem com o organizador pra fechar!`,
+    `Dupla ${id} CONFIRMADA! ${d.emoji}
+
+${d.nomes[d.pagante]} abre a carteira e ${d.nomes[d.pagante===0?1:0]} finge que ajudou 😂
+
+Agora é só treinar a remada. Boa sorte!`,
+  ];
+  openModal(['🎉','🚣‍♂️','🌊','🏄‍♂️','🎊','🦆'][~~(Math.random()*6)],
+    `Dupla ${id} Confirmada! ${d.emoji}`,
+    msgs[~~(Math.random()*msgs.length)],
+    [{lbl:'🎊 ARRASANDO!',fn:closeModal},{lbl:'🎟️ Comprar na Sympla',fn:()=>{closeModal();window.open('https://www.sympla.com.br/evento/niver-do-kayo--29-de-mar/3352919','_blank');}}]);
+}
+
+function updateProgress(){
+  const vals=Object.values(state.duplas);
+  const done=vals.filter(d=>d.confirmada).length;
+  document.getElementById('pgfill').style.width=(done/DUPLAS.length*100)+'%';
+  document.getElementById('pgcnt').textContent=done;
+  document.getElementById('stcfm').textContent=done;
+  const msgs=['⏳ Nenhuma dupla confirmada ainda... galera, acorda!','🌊 Temos uma dupla! Quem é a próxima?','🚣 Duas duplas! Animando!','🎉 Metade confirmada! Tá ficando real!','🔥 Quase lá! Última chamada!','🏆 TRIPULAÇÃO COMPLETA!! VAI SER ÉPICO!!'];
+  document.getElementById('pgstat').textContent=msgs[Math.min(done,msgs.length-1)];
+}
+
+function updateRanking(){
+  const vals=Object.values(state.duplas);
+  const sorted=vals.filter(d=>d.confirmada).sort((a,b)=>new Date(a.confirmedAt)-new Date(b.confirmedAt));
+  const pending=vals.filter(d=>!d.confirmada);
+  const pc=['gd','sv','bz'],pi=['🥇','🥈','🥉'];
+  document.getElementById('rklist').innerHTML=[
+    ...sorted.map((ds,i)=>{const d=DUPLAS.find(x=>x.id===ds.id);const ts=new Date(ds.confirmedAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});return `<div class="rkitem ok rv"><div class="rkpos ${pc[i]||''}">${pi[i]||(i+1)}</div><div class="rknames">${d.emoji} Dupla ${d.id} — ${d.nomes[0]} & ${d.nomes[1]}<small>✅ Confirmada às ${ts}</small></div><div>✅</div></div>`;}),
+    ...pending.map(ds=>{const d=DUPLAS.find(x=>x.id===ds.id);return `<div class="rkitem rv"><div class="rkpos">⏳</div><div class="rknames">${d.emoji} Dupla ${d.id} — ${d.nomes[0]} & ${d.nomes[1]}<small>Aguardando...</small></div><div>🚣</div></div>`;})
+  ].join('')||'<div style="color:var(--mu);font-weight:700;margin-top:1rem">⏳ Seja o primeiro!</div>';
+  initReveal();
+}
+
+/* ═══════════════════════════════════════
+   MURAL — Neon DB
+═══════════════════════════════════════ */
+const MAVS=['🌊','🚣','🦆','🛶','🎉','🏄','🐠','⚓','🎂','🤿','💦','🐟'];
+
+function renderMural(msgs) {
+  const c=document.getElementById('muralmsgs');
+  const seedDefault = msgs && msgs.length === 0;
+  const list = (msgs && msgs.length > 0) ? msgs : SEEDED_MURAL;
+  const bot=c.scrollHeight-c.scrollTop-c.clientHeight<40;
+  c.innerHTML=list.map(m=>`
+    <div class="mmsg"><div class="mav2">${m.av||'🚣'}</div>
+    <div class="mbub"><div class="mbn">${esc(m.name)}</div>${esc(m.text)}
+    <div class="mbt">${new Date(m.time).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div></div></div>`).join('');
+  if(bot||seedDefault)c.scrollTop=c.scrollHeight;
+}
+
+async function loadMural() {
+  try {
+    const res = await fetch('/api/mural');
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    const msgs = await res.json();
+    renderMural(msgs);
+  } catch(e) {
+    console.warn('Mural offline:', e);
+    renderMural([]);
+  }
+}
+
+async function sendMural(){
+  const name=document.getElementById('mname').value.trim()||'Anônimo';
+  const text=document.getElementById('mtext').value.trim();
+  if(!text){shake('mtext');return;}
+  const av=MAVS[~~(Math.random()*MAVS.length)];
+  const btn=document.querySelector('.mural-send');
+  if(btn){btn.disabled=true;btn.textContent='⏳';}
+  try {
+    const res = await fetch('/api/mural', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({name, text, av})
+    });
+    if (res.status === 429) {
+      const err = await res.json();
+      showToast('😅', err.error || 'Muitas mensagens!');
+      return;
+    }
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    document.getElementById('mtext').value='';
+    await loadMural(); // recarrega do banco
+    if(sfxOn)playTune('pop');
+  } catch(e) {
+    showToast('⚠️','Erro ao enviar mensagem. Tente novamente!');
+    console.error(e);
+  } finally {
+    if(btn){btn.disabled=false;btn.textContent='🚀 Enviar';}
+  }
+}
+
+// Poll do mural a cada 30s para novidades em tempo real
+setInterval(loadMural, 30000);
+
+/* ═══════════════════════════════════════
+   FAQ
+═══════════════════════════════════════ */
+function renderFaq(){
+  document.getElementById('faqlist').innerHTML=FAQS.map((f,i)=>`
+    <div class="faqitem rv" id="fq-${i}">
+      <div class="faqq" onclick="toggleFaq(${i})">${f.q}<span class="faqarr">▼</span></div>
+      <div class="faqa">${f.a}</div></div>`).join('');
+}
+function toggleFaq(i){const el=document.getElementById(`fq-${i}`),was=el.classList.contains('open');document.querySelectorAll('.faqitem').forEach(e=>e.classList.remove('open'));if(!was)el.classList.add('open');}
+
+/* ═══════════════════════════════════════
+   PIX
+═══════════════════════════════════════ */
+function showPix(id){
+  const d=DUPLAS.find(x=>x.id===id);
+  openModal('💳','Chave Pix do Evento',`Dupla ${id} · ${d.nomes[d.pagante]} paga R$89,00`,
+    [{lbl:'👍 Entendido!',fn:closeModal}],
+    `<div class="pixbox" id="pxb" onclick="cpPix()">${CFG.pixKey}</div>
+     <div style="font-size:.73rem;color:var(--mu);font-weight:700;margin-bottom:.5rem">Titular: ${CFG.pixNome} · Clique para copiar</div>`);
+}
+function cpPix(){
+  navigator.clipboard.writeText(CFG.pixKey).catch(()=>{});
+  const el=document.getElementById('pxb');if(el){const p=el.textContent;el.textContent='✅ Copiado!';setTimeout(()=>el.textContent=p,1800);}
+  if(sfxOn)playTune('pop');
+}
+
+/* ═══════════════════════════════════════
+   MODAL
+═══════════════════════════════════════ */
+function openModal(emoji,title,body,acts,extra){
+  document.getElementById('memoji').textContent=emoji;
+  document.getElementById('mtitle').textContent=title;
+  document.getElementById('mbody').textContent=body;
+  document.getElementById('mextra').innerHTML=extra||'';
+  document.getElementById('macts').innerHTML=(acts||[{lbl:'Fechar',fn:closeModal}]).map((_,i)=>
+    `<button class="${i===0?'mclose':'mpix2'}" id="ma-${i}">${_.lbl}</button>`).join('');
+  (acts||[{lbl:'Fechar',fn:closeModal}]).forEach((_,i)=>document.getElementById(`ma-${i}`).onclick=_.fn);
+  document.getElementById('movlay').classList.add('open');
+}
+function closeModal(){document.getElementById('movlay').classList.remove('open')}
+document.getElementById('movlay').addEventListener('click',e=>{if(e.target===document.getElementById('movlay'))closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+/* ═══════════════════════════════════════
+   NOTIFICAÇÃO DEV PEDREXXX
+═══════════════════════════════════════ */
+function showCard(){
+  const msg=DEV_MSGS[~~(Math.random()*DEV_MSGS.length)];
+  document.getElementById('dcmsg').textContent=msg;
+  const now=new Date();
+  document.getElementById('dctime').textContent=`${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('devcard').classList.add('show');
+  if(sfxOn)playTune('pop');
+}
+function hideCard(){document.getElementById('devcard').classList.remove('show')}
+function thankDev(){
+  hideCard();
+  showToast('🙏','Que isso! Obrigado pelo reconhecimento! — Pedrexxx 😌');
+  setTimeout(launchConfetti,400);
+}
+
+/* ═══════════════════════════════════════
+   PATO
+═══════════════════════════════════════ */
+let duckN=0;
+const DUCK_MSGS=[
+  {e:'🦆',m:'QUACK! Obrigado por clicar em mim! 🥹'},
+  {e:'🦆',m:'Sou o mascote oficial desta canoagem'},
+  {e:'🦆',m:'Treinei 3 semanas. Estava pronto. Vocês vieram agora.'},
+  {e:'🦆',m:'Vi o Kayo ensaiando. Precisamos rezar muito 🙏'},
+  {e:'⭐',m:'5 cliques! Você tem tempo demais, hein...'},
+  {e:'💫',m:'PATO SECRETO DESBLOQUEADO! Prêmio: orgulho eterno 🏆'},
+  {e:'🌈',m:'MODO ARCO-ÍRIS! O pato agradece sua dedicação ✨'},
+];
+function duckClick(){
+  duckN++;
+  const d=DUCK_MSGS[Math.min(duckN-1,DUCK_MSGS.length-1)];
+  showToast(d.e,d.m);
+  if(sfxOn)playTune('quack');
+  if(duckN>=5)document.getElementById('bigDuck').style.filter=`hue-rotate(${Math.random()*360}deg)`;
+  if(duckN===7)launchConfetti();
+}
+
+/* ═══════════════════════════════════════
+   TOAST
+═══════════════════════════════════════ */
+let toastT=null;
+function showToast(e,m,ms=3400){
+  clearTimeout(toastT);
+  document.getElementById('te').textContent=e;
+  document.getElementById('tm').textContent=m;
+  const t=document.getElementById('toast');
+  t.classList.add('show');
+  toastT=setTimeout(()=>t.classList.remove('show'),ms);
+}
+function rndToast(){const t=TOASTS[~~(Math.random()*TOASTS.length)];showToast(t.e,t.m);}
+
+/* ═══════════════════════════════════════
+   VIDEO
+═══════════════════════════════════════ */
+let vplay=true;
+window.addEventListener('DOMContentLoaded',()=>{
+  const vid=document.getElementById('kvid');
+  const go=()=>vid.play().then(()=>{document.getElementById('fabV').textContent='⏸';vplay=true;})
+    .catch(()=>{document.getElementById('fabV').textContent='▶';vplay=false;
+      document.addEventListener('click',()=>vid.play().then(()=>{document.getElementById('fabV').textContent='⏸';vplay=true;}).catch(()=>{}),{once:true});});
+  vid.readyState>=1?go():vid.addEventListener('loadedmetadata',go);
+  vid.addEventListener('error',()=>document.getElementById('fabV').textContent='📽');
+});
+function toggleVid(){const vid=document.getElementById('kvid');if(vid.paused){vid.play();document.getElementById('fabV').textContent='⏸';vplay=true;}else{vid.pause();document.getElementById('fabV').textContent='▶';vplay=false;}}
+
+/* ═══════════════════════════════════════
+   MÚSICA
+═══════════════════════════════════════ */
+let musOn=false;
+function toggleMusic(){
+  const a=document.getElementById('bgm'),fab=document.getElementById('fabM');
+  if(musOn){a.pause();fab.textContent='🎵';fab.classList.remove('on');musOn=false;}
+  else{a.volume=.35;a.play().then(()=>{fab.textContent='🔉';fab.classList.add('on');musOn=true;showToast('🎵','Música ligada! 🎶');}).catch(()=>showToast('🎵','Clique em qualquer lugar primeiro!'));}
+}
+
+/* ═══════════════════════════════════════
+   SFX
+═══════════════════════════════════════ */
+let sfxOn=false,actx=null;
+function toggleSfx(){
+  sfxOn=!sfxOn;document.getElementById('fabS').textContent=sfxOn?'🔊':'🔇';
+  if(sfxOn){actx=new(window.AudioContext||window.webkitAudioContext)();playTune('enable');}
+}
+function playTune(t){
+  if(!actx)return;
+  const ns={confirm:[523,659,784,1047],pop:[440,554],enable:[330,440,523],quack:[200,180,220]}[t]||[440];
+  ns.forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);o.frequency.value=f;o.type=t==='quack'?'sawtooth':'sine';const tm=actx.currentTime+i*.12;g.gain.setValueAtTime(0,tm);g.gain.linearRampToValueAtTime(.12,tm+.02);g.gain.exponentialRampToValueAtTime(.001,tm+.25);o.start(tm);o.stop(tm+.3);});
+}
+
+/* ═══════════════════════════════════════
+   THEME
+═══════════════════════════════════════ */
+function toggleTheme(){const b=document.body,l=document.getElementById('tlbl');if(b.classList.contains('tempestade')){b.classList.replace('tempestade','sol');l.textContent='🌙 Tempestade';}else{b.classList.replace('sol','tempestade');l.textContent='☀️ Sol';}}
+
+/* ═══════════════════════════════════════
+   PARTICLES + BUBBLES
+═══════════════════════════════════════ */
+const PEMOJIS=['🚣','🌊','🦆','💦','⚓','🛶','🎉','🐟','🌴','💧','🎂','🏄'];
+function spawnParticles(){const c=document.getElementById('pts');for(let i=0;i<22;i++){const el=document.createElement('span');el.className='pt';el.textContent=PEMOJIS[~~(Math.random()*PEMOJIS.length)];el.style.cssText=`left:${Math.random()*100}vw;animation-duration:${10+Math.random()*14}s;animation-delay:${Math.random()*22}s;font-size:${1+Math.random()*1.5}rem`;c.appendChild(el);}}
+function spawnBubbles(){for(let i=0;i<8;i++){const el=document.createElement('div');el.className='bubble';const sz=20+Math.random()*55;el.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}vw;bottom:-${sz}px;--dr:${(Math.random()-.5)*180}px;animation-duration:${13+Math.random()*16}s;animation-delay:${Math.random()*18}s`;document.body.appendChild(el);}}
+
+/* ═══════════════════════════════════════
+   CONFETTI + REACTIONS
+═══════════════════════════════════════ */
+function launchConfetti(){const cv=document.getElementById('ccanvas'),ctx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;cv.style.display='block';const cols=['#FF6B1A','#00C4CC','#FFD93D','#22C55E','#FF9A3C','#00EBFF','#FF6B6B'];const ps=Array.from({length:150},()=>({x:Math.random()*cv.width,y:-20,r:3+Math.random()*6,c:cols[~~(Math.random()*cols.length)],a:1,vx:(Math.random()-.5)*4,vy:2+Math.random()*3,ta:0}));let f=0;(function loop(){ctx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.ta+=.1;p.x+=p.vx+Math.sin(f*.05)*.5;p.y+=p.vy;p.a-=.006;ctx.save();ctx.globalAlpha=Math.max(0,p.a);ctx.fillStyle=p.c;ctx.beginPath();ctx.ellipse(p.x,p.y,p.r,p.r*.4,p.ta,0,Math.PI*2);ctx.fill();ctx.restore();});f++;if(ps.some(p=>p.a>0))requestAnimationFrame(loop);else{ctx.clearRect(0,0,cv.width,cv.height);cv.style.display='none';}})();}
+function spawnReactions(id){const card=document.getElementById(`dc-${id}`);if(!card)return;const r=card.getBoundingClientRect();['🎉','🚣','🌊','🥳','✅','💦','🎊','🦆'].forEach((e,i)=>{setTimeout(()=>{const el=document.createElement('div');el.className='freact';el.textContent=e;el.style.cssText=`left:${r.left+r.width/2+(Math.random()-.5)*100}px;top:${r.top+window.scrollY}px`;document.body.appendChild(el);setTimeout(()=>el.remove(),1500);},i*90);});}
+
+/* ═══════════════════════════════════════
+   LOGO CLICKS + KONAMI
+═══════════════════════════════════════ */
+let lclk=0;
+function logoClick(){lclk++;if(lclk===3)showToast('🤔','Mais 2 cliques pra descobrir o segredo...');if(lclk>=5){lclk=0;showToast('😂','5 cliques no logo. Sem comentários 😂');showCard();launchConfetti();}}
+let ksq=[];const KC=[38,38,40,40,37,39,37,39,66,65];
+document.addEventListener('keydown',e=>{ksq.push(e.keyCode);if(ksq.length>10)ksq.shift();if(ksq.join(',')==KC.join(',')){showCard();launchConfetti();showToast('🎮','KONAMI CODE! Pedrexxx apareceu! 👨‍💻');}});
+
+/* ═══════════════════════════════════════
+   SCROLL — foto do Kayo aparece do nada
+═══════════════════════════════════════ */
+let popTrig=false;
+window.addEventListener('scroll',()=>{
+  const pct=scrollY/(document.body.offsetHeight-innerHeight);
+  if(pct>.45&&!popTrig){
+    popTrig=true;
+    const p=KAYO_FOTOS[~~(Math.random()*KAYO_FOTOS.length)];
+    popupFoto(p.f,p.cap,p.emoji);
+    showToast('📸','Uma foto do Kayo apareceu do NADA 😱');
+  }
+});
+
+/* ═══════════════════════════════════════
+   FAKE VIEWERS
+═══════════════════════════════════════ */
+function fakeV(){document.getElementById('vc').textContent=3+~~(Math.random()*9)}
+setInterval(fakeV,7000);fakeV();
+
+/* ═══════════════════════════════════════
+   REVEAL
+═══════════════════════════════════════ */
+const rvobs=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>{e.target.classList.add('in');rvobs.unobserve(e.target);},i*55);});},{threshold:.1});
+function initReveal(){document.querySelectorAll('.rv:not(.in)').forEach(el=>rvobs.observe(el))}
+
+/* ═══════════════════════════════════════
+   UTILS
+═══════════════════════════════════════ */
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function shake(id){const el=document.getElementById(id);el.style.borderColor='var(--r)';setTimeout(()=>el.style.borderColor='',800)}
+
+/* ═══════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', async ()=>{
+  renderStrip();
+  renderGallery();
+  renderFaq();
+  spawnParticles();
+  spawnBubbles();
+  initReveal();
+  setTimeout(()=>document.querySelector('.hero .rv')?.classList.add('in'),300);
+  setTimeout(initReveal,200);
+
+  // Carrega dados do banco (Neon)
+  setSyncStatus('syncing');
+  await loadDuplas();
+  renderDuplas();
+  updateProgress();
+  updateRanking();
+  await loadMural();
+
+  // Toasts e notificações
+  setTimeout(()=>showToast('🎵','Clique no 🎵 pra ativar a trilha sonora épica!'),4000);
+  setTimeout(rndToast,22000);
+  setInterval(rndToast,48000);
+  setTimeout(showCard,16000);
+});
+</script>
+</body>
+</html>

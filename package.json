@@ -1,0 +1,14 @@
+{
+  "name": "canoagem-kayo",
+  "version": "1.0.0",
+  "description": "Site da Canoagem do Kayo com backend Neon",
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.4"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}
