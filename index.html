@@ -333,11 +333,6 @@ footer::before{content:'🚣';position:absolute;font-size:18rem;opacity:.025;top
 .pixbox::after{content:'📋 Copiar';position:absolute;bottom:-10px;right:10px;background:var(--t);color:var(--dk);font-family:'Nunito',sans-serif;font-weight:900;font-size:.62rem;letter-spacing:1px;padding:.2rem .6rem;border-radius:6px;opacity:0;transition:opacity .2s;pointer-events:none}
 .pixbox:hover::after{opacity:1}
 
-.sync-badge{text-align:center;margin:0 auto 1.2rem;padding:.3rem 1rem;border-radius:30px;font-size:.75rem;font-weight:800;display:block;width:fit-content;transition:all .3s}
-.sync-badge.syncing{background:rgba(255,211,61,.12);color:var(--y);border:1px solid rgba(255,211,61,.3)}
-.sync-badge.ok{background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.3)}
-.sync-badge.err{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25)}
-
 /* ═══════════ MOBILE ═══════════ */
 @media(max-width:600px){
   /* Nav */
@@ -578,9 +573,6 @@ footer::before{content:'🚣';position:absolute;font-size:18rem;opacity:.025;top
       <h2 class="stitle">As 6 Duplas</h2>
       <p class="ssub">Confirme sua dupla! Fica salvo no seu navegador 🚣</p>
     </div>
-    <!-- Badge de sincronização -->
-    <div id="sync-badge" class="sync-badge syncing" style="text-align:center;margin:0 auto 1rem;display:inline-block;padding:.3rem 1rem;border-radius:30px;font-size:.75rem;font-weight:800;background:rgba(255,211,61,.12);color:var(--y);border:1px solid rgba(255,211,61,.3);width:fit-content;display:block;">⏳ Sincronizando...</div>
-
     <div class="progwrap rv">
       <div class="proglabel"><span>Progresso das confirmações</span><span><span id="pgcnt">0</span>/6 duplas</span></div>
       <div class="progtrack"><div class="progfill" id="pgfill"></div></div>
@@ -735,38 +727,11 @@ const SEEDED_MURAL = [
 ];
 
 /* ═══════════════════════════════════════
-   STATE — Neon DB via Netlify Functions
-   GET/PUT /api/duplas  |  GET/POST /api/mural
+   STATE — localStorage (sem Firebase)
 ═══════════════════════════════════════ */
-let state = { duplas: Object.fromEntries(DUPLAS.map(d=>[d.id,{id:d.id,confirmada:false,confirmedAt:null}])) };
-
-// ── Carrega duplas do banco ──
-async function loadDuplas() {
-  try {
-    setSyncStatus('syncing');
-    const res = await fetch('/api/duplas');
-    if (!res.ok) throw new Error('HTTP '+res.status);
-    state.duplas = await res.json();
-    setSyncStatus('ok');
-  } catch(e) {
-    console.warn('Usando estado local (offline):', e);
-    setSyncStatus('err');
-  }
-}
-
-// ── Status de sincronização (badge no topo das duplas) ──
-function setSyncStatus(s) {
-  const el = document.getElementById('sync-badge');
-  if (!el) return;
-  const map = {
-    syncing: { cls:'syncing', txt:'⏳ Sincronizando...' },
-    ok:      { cls:'ok',      txt:'🟢 Dados em tempo real' },
-    err:     { cls:'err',     txt:'⚠️ Modo offline' },
-  };
-  const { cls, txt } = map[s] || map.ok;
-  el.className = 'sync-badge ' + cls;
-  el.textContent = txt;
-}
+function ls(k){try{const r=localStorage.getItem(k);return r?JSON.parse(r):null}catch{return null}}
+function lss(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+let state = ls(CFG.stateKey) || {duplas:Object.fromEntries(DUPLAS.map(d=>[d.id,{id:d.id,confirmada:false,confirmedAt:null}]))};
 
 /* ═══════════════════════════════════════
    FOTOS DO KAYO — helpers
@@ -865,38 +830,16 @@ function renderDuplas(){
   initReveal();
 }
 
-async function confirmar(id){
+function confirmar(id){
   const ds=state.duplas[id];if(!ds||ds.confirmada)return;
-  const btn=document.getElementById('db-'+id);
-  if(btn){btn.disabled=true;btn.textContent='⏳ Salvando...';}
-  try {
-    const res = await fetch('/api/duplas', {
-      method:'PUT',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({id, confirmedBy:'visitante'})
-    });
-    if(res.status===409){await loadDuplas();renderDuplas();updateProgress();updateRanking();return;}
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const updated = await res.json();
-    state.duplas[id] = updated;
-  } catch(e){
-    console.warn('Fallback offline:',e);
-    state.duplas[id]={...ds,confirmada:true,confirmedAt:new Date().toISOString()};
-  }
+  state.duplas[id]={...ds,confirmada:true,confirmedAt:new Date().toISOString()};
+  lss(CFG.stateKey,state);
   renderDuplas();updateProgress();updateRanking();
   launchConfetti();spawnReactions(id);if(sfxOn)playTune('confirm');
   const d=DUPLAS.find(x=>x.id===id);
   const msgs=[
-    `${d.nomes[d.pagante]} e ${d.nomes[d.pagante===0?1:0]} estão na canoa! 🚣
-
-${d.nomes[d.pagante]} paga R$89 e ${d.nomes[d.pagante===0?1:0]} ganha o cupom.
-
-Falem com o organizador pra fechar!`,
-    `Dupla ${id} CONFIRMADA! ${d.emoji}
-
-${d.nomes[d.pagante]} abre a carteira e ${d.nomes[d.pagante===0?1:0]} finge que ajudou 😂
-
-Agora é só treinar a remada. Boa sorte!`,
+    `${d.nomes[d.pagante]} e ${d.nomes[d.pagante===0?1:0]} estão na canoa! 🚣\n\n${d.nomes[d.pagante]} paga R$89 e ${d.nomes[d.pagante===0?1:0]} ganha o cupom.\n\nFalem com o organizador pra fechar!`,
+    `Dupla ${id} CONFIRMADA! ${d.emoji}\n\n${d.nomes[d.pagante]} abre a carteira e ${d.nomes[d.pagante===0?1:0]} finge que ajudou 😂\n\nAgora é só treinar a remada. Boa sorte!`,
   ];
   openModal(['🎉','🚣‍♂️','🌊','🏄‍♂️','🎊','🦆'][~~(Math.random()*6)],
     `Dupla ${id} Confirmada! ${d.emoji}`,
@@ -927,66 +870,29 @@ function updateRanking(){
 }
 
 /* ═══════════════════════════════════════
-   MURAL — Neon DB
+   MURAL
 ═══════════════════════════════════════ */
 const MAVS=['🌊','🚣','🦆','🛶','🎉','🏄','🐠','⚓','🎂','🤿','💦','🐟'];
-
-function renderMural(msgs) {
+function renderMural(){
+  const msgs=ls(CFG.muralKey)||[...SEEDED_MURAL];
   const c=document.getElementById('muralmsgs');
-  const seedDefault = msgs && msgs.length === 0;
-  const list = (msgs && msgs.length > 0) ? msgs : SEEDED_MURAL;
+  if(!msgs.length){c.innerHTML='<div style="color:var(--mu);font-weight:700;text-align:center;padding:1rem">Seja o primeiro! 🚣</div>';return;}
   const bot=c.scrollHeight-c.scrollTop-c.clientHeight<40;
-  c.innerHTML=list.map(m=>`
+  c.innerHTML=[...msgs].sort((a,b)=>a.time-b.time).map(m=>`
     <div class="mmsg"><div class="mav2">${m.av||'🚣'}</div>
     <div class="mbub"><div class="mbn">${esc(m.name)}</div>${esc(m.text)}
     <div class="mbt">${new Date(m.time).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div></div></div>`).join('');
-  if(bot||seedDefault)c.scrollTop=c.scrollHeight;
+  if(bot)c.scrollTop=c.scrollHeight;
 }
-
-async function loadMural() {
-  try {
-    const res = await fetch('/api/mural');
-    if (!res.ok) throw new Error('HTTP '+res.status);
-    const msgs = await res.json();
-    renderMural(msgs);
-  } catch(e) {
-    console.warn('Mural offline:', e);
-    renderMural([]);
-  }
-}
-
-async function sendMural(){
+function sendMural(){
   const name=document.getElementById('mname').value.trim()||'Anônimo';
   const text=document.getElementById('mtext').value.trim();
   if(!text){shake('mtext');return;}
-  const av=MAVS[~~(Math.random()*MAVS.length)];
-  const btn=document.querySelector('.mural-send');
-  if(btn){btn.disabled=true;btn.textContent='⏳';}
-  try {
-    const res = await fetch('/api/mural', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({name, text, av})
-    });
-    if (res.status === 429) {
-      const err = await res.json();
-      showToast('😅', err.error || 'Muitas mensagens!');
-      return;
-    }
-    if (!res.ok) throw new Error('HTTP '+res.status);
-    document.getElementById('mtext').value='';
-    await loadMural(); // recarrega do banco
-    if(sfxOn)playTune('pop');
-  } catch(e) {
-    showToast('⚠️','Erro ao enviar mensagem. Tente novamente!');
-    console.error(e);
-  } finally {
-    if(btn){btn.disabled=false;btn.textContent='🚀 Enviar';}
-  }
+  const msgs=ls(CFG.muralKey)||[...SEEDED_MURAL];
+  msgs.push({name,text,time:Date.now(),av:MAVS[~~(Math.random()*MAVS.length)]});
+  lss(CFG.muralKey,msgs.slice(-80));
+  document.getElementById('mtext').value='';renderMural();if(sfxOn)playTune('pop');
 }
-
-// Poll do mural a cada 30s para novidades em tempo real
-setInterval(loadMural, 30000);
 
 /* ═══════════════════════════════════════
    FAQ
@@ -1150,19 +1056,7 @@ function logoClick(){lclk++;if(lclk===3)showToast('🤔','Mais 2 cliques pra des
 let ksq=[];const KC=[38,38,40,40,37,39,37,39,66,65];
 document.addEventListener('keydown',e=>{ksq.push(e.keyCode);if(ksq.length>10)ksq.shift();if(ksq.join(',')==KC.join(',')){showCard();launchConfetti();showToast('🎮','KONAMI CODE! Pedrexxx apareceu! 👨‍💻');}});
 
-/* ═══════════════════════════════════════
-   SCROLL — foto do Kayo aparece do nada
-═══════════════════════════════════════ */
-let popTrig=false;
-window.addEventListener('scroll',()=>{
-  const pct=scrollY/(document.body.offsetHeight-innerHeight);
-  if(pct>.45&&!popTrig){
-    popTrig=true;
-    const p=KAYO_FOTOS[~~(Math.random()*KAYO_FOTOS.length)];
-    popupFoto(p.f,p.cap,p.emoji);
-    showToast('📸','Uma foto do Kayo apareceu do NADA 😱');
-  }
-});
+/* Foto surpresa no scroll — desativada */
 
 /* ═══════════════════════════════════════
    FAKE VIEWERS
@@ -1185,28 +1079,26 @@ function shake(id){const el=document.getElementById(id);el.style.borderColor='va
 /* ═══════════════════════════════════════
    INIT
 ═══════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', async ()=>{
+document.addEventListener('DOMContentLoaded',()=>{
   renderStrip();
   renderGallery();
+  renderDuplas();
   renderFaq();
+  renderMural();
+  updateProgress();
+  updateRanking();
   spawnParticles();
   spawnBubbles();
   initReveal();
   setTimeout(()=>document.querySelector('.hero .rv')?.classList.add('in'),300);
   setTimeout(initReveal,200);
 
-  // Carrega dados do banco (Neon)
-  setSyncStatus('syncing');
-  await loadDuplas();
-  renderDuplas();
-  updateProgress();
-  updateRanking();
-  await loadMural();
-
-  // Toasts e notificações
+  // Primeiro toast: música
   setTimeout(()=>showToast('🎵','Clique no 🎵 pra ativar a trilha sonora épica!'),4000);
+  // Toasts randômicos
   setTimeout(rndToast,22000);
   setInterval(rndToast,48000);
+  // Notificação do Pedrexxx aparece depois de 16s
   setTimeout(showCard,16000);
 });
 </script>
